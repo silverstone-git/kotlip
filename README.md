@@ -10,5 +10,4 @@ __DEPENDENCIES__<br>
 > kotlinc<br>
 
 __KNOWN BUGS__<br>
-When used in many-line mode, i.e., without ';' in the command,<br>
-If User types ';' inside a string in the command, IP assumes it to be the last line<br>
+You Tell Me!
