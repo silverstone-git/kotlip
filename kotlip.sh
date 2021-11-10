@@ -1,5 +1,10 @@
 #!/bin/sh
 
+#
+# kotlip; version 1.1, by silverstone-git
+# last updated: 10th Nov 2021
+#
+
 contains_string() {
     substring=$1
     string=$2
