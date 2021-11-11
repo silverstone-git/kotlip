@@ -1,8 +1,8 @@
 #!/bin/sh
 
 #
-# kotlip; version 1.1, by silverstone-git
-# last updated: 10th Nov 2021
+# kotlip; version 1.2, by silverstone-git
+# last updated: 11th Nov 2021
 #
 
 contains_string() {
@@ -31,32 +31,34 @@ is_final_line() {
         # the //<sp> replaces all spaces to nothing, thus leaving us with non-blank or nothing, which,
         # is made non-blank forcefully because there are binary operators in the following lines, which
         # would've made it look like binary operator 1 operand if unattended
-        if [ -z ${first// } ]; then
+        if [ -z ${first// } ];
+        then
             #echo "Found a space or an unset, setting first to x"
             first="x"
         fi
 
         # comparing to confirm existence of quotes
         #echo "first was: $first"
-        if [ $first = "'" ]; then
+        if [ $first = "'" ];
+        then
             squote_counter=$(echo "$squote_counter+1" | bc -l )
         fi
-        if [ $first = '"' ]; then
+
+        if [ $first = '"' ];
+        then
             dquote_counter=$(echo "$dquote_counter+1" | bc -l )
         fi
 
         # if a semicolon is found, and quotes are closed, ie semicolon is outside quotes, it returns 1
-        if [ $first = ';' ]; then
-            if [ $(expr $squote_counter % 2) -eq 0 ]; then
-                if [ $(expr $dquote_counter % 2) -eq 0 ]; then
-                    #echo "all conditions match for lastline, flagging and breaking the loop.."
-                    lastline=1
-                    break
-                fi
-            fi
+        if [ $first = ';' ] && [ $(expr $squote_counter % 2) -eq 0 ] && [ $(expr $dquote_counter % 2) -eq 0 ];
+        then
+            #echo "This is the last line, flagging and breaking the loop.."
+            lastline=1
+            break
         fi
+
         tmp=$rest   # the string gets stripped from left on each iteration so that each first char is up for manipulation
-    c=$(echo "$c+1" | bc)
+        c=$(echo "$c+1" | bc)
     done
 
     # the default option, ie, if all conditions leading up to returning 1 were false, is 0
@@ -66,14 +68,15 @@ is_final_line() {
 contflag=0
 
 echo
-echo "Kotlin Interpretor 1.1 by Aryan Sidhwani"
+echo "Kotlin Interpretor 1.2 by Aryan Sidhwani"
 echo "Type 'exit;' to exit"
 echo
 
 while true
 do
 
-if [ $contflag -eq 0 ]; then
+if [ $contflag -eq 0 ];
+then
     read -p "kt>> " line
 else
     read -p "> " line
@@ -81,18 +84,24 @@ fi
 
 # The program will exit if 'exit;' is written
 
-if [ "$line" = "exit;" ]; then
-	if [ -f "tempfile.kts" ]; then
-		rm tempfile.kts
-	fi
+if [ "$line" = "exit;" ];
+then
+        if [ -f "tempfile.kts" ];
+        then
+		    rm tempfile.kts
+        fi
+    # break will happen unconditionally because line was exit, therefore a nested if-then
     break
 fi
 
 # Checks if ; exists in entered line and if it does, checks if the quotes are closed
 # and then executes the script and deletes the temporary file, otherwise adds the line to the temp file
 
+# The if-then have been nested because contains_string function is faster and therefore the longer one should
+# only be applied on sus cases, ie, ones with ';' in it
 contains_string ";" "$line"
-if [ $? -eq 1 ]; then
+if [ $? -eq 1 ];
+then
 
     is_final_line "$line"
     if [ $? -eq 1 ];
